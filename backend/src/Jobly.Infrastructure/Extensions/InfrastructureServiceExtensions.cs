@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Hangfire;
 using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Identity;
+using Jobly.Core.Entities;
 
 namespace Jobly.Infrastructure.Extensions;
 
@@ -29,6 +31,9 @@ public static class InfrastructureServiceExtensions
         // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+        // Identity
+        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
         // Services
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IEmailService, EmailService>();
@@ -37,17 +42,17 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         // Hangfire
-        services.AddHangfire(config => config
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(options =>
-                options.UseNpgsqlConnection(
-                    configuration.GetConnectionString("DefaultConnection")
-                )
-            )
-        );
-        services.AddHangfireServer();
+        // services.AddHangfire(config => config
+        //     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        //     .UseSimpleAssemblyNameTypeSerializer()
+        //     .UseRecommendedSerializerSettings()
+        //     .UsePostgreSqlStorage(options =>
+        //         options.UseNpgsqlConnection(
+        //             configuration.GetConnectionString("DefaultConnection")
+        //         )
+        //     )
+        // );
+        // services.AddHangfireServer();
 
         // Redis (optional — comment out until needed)
         // services.AddStackExchangeRedisCache(options =>

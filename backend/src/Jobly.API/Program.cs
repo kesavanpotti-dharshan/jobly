@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AspNet.Security.OAuth.GitHub;
 using Serilog;
+using Jobly.Application.Extensions;
+using Jobly.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +21,10 @@ builder.Services.AddSwaggerGen();
 
 // ── Infrastructure (DB, UoW, Services, Hangfire) ─────
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
 
 // ── JWT Authentication ────────────────────────────────
-builder.Services.AddAuthentication(options =>
+var authBuilder = builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,18 +43,27 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)),
         ClockSkew = TimeSpan.Zero
     };
-})
-.AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration["OAuth:Google:ClientId"]!;
-    options.ClientSecret = builder.Configuration["OAuth:Google:ClientSecret"]!;
-})
-.AddGitHub(options =>
-{
-    options.ClientId = builder.Configuration["OAuth:GitHub:ClientId"]!;
-    options.ClientSecret = builder.Configuration["OAuth:GitHub:ClientSecret"]!;
-    options.Scope.Add("user:email");
 });
+
+// Only register OAuth providers if credentials are configured
+if (!string.IsNullOrWhiteSpace(builder.Configuration["OAuth:Google:ClientId"]))
+{
+    authBuilder.AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["OAuth:Google:ClientId"]!;
+        options.ClientSecret = builder.Configuration["OAuth:Google:ClientSecret"]!;
+    });
+}
+
+if (!string.IsNullOrWhiteSpace(builder.Configuration["OAuth:GitHub:ClientId"]))
+{
+    authBuilder.AddGitHub(options =>
+    {
+        options.ClientId = builder.Configuration["OAuth:GitHub:ClientId"]!;
+        options.ClientSecret = builder.Configuration["OAuth:GitHub:ClientSecret"]!;
+        options.Scope.Add("user:email");
+    });
+}
 
 // ── Authorisation ─────────────────────────────────────
 builder.Services.AddAuthorization();
@@ -77,11 +89,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("JoblyClient");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHangfireDashboard("/hangfire");
+// app.UseHangfireDashboard("/hangfire");
 app.MapControllers();
 
 app.Run();

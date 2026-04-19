@@ -59,13 +59,21 @@ public class EmailService : IEmailService
     }
 
     private async Task SendEmailAsync(
-        string toEmail,
-        string toName,
-        string subject,
-        string htmlContent,
-        CancellationToken cancellationToken)
+    string toEmail,
+    string toName,
+    string subject,
+    string htmlContent,
+    CancellationToken cancellationToken)
     {
-        var client = new SendGridClient(_configuration["SendGrid:ApiKey"]);
+        var apiKey = _configuration["SendGrid:ApiKey"];
+        if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "placeholder")
+        {
+            // Dev mode — skip sending, just log
+            Console.WriteLine($"[DEV] Email to {toEmail} | Subject: {subject}");
+            return;
+        }
+
+        var client = new SendGridClient(apiKey);
         var from = new EmailAddress(
             _configuration["SendGrid:FromEmail"],
             _configuration["SendGrid:FromName"]);
