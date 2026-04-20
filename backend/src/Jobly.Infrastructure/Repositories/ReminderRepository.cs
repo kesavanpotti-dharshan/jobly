@@ -9,11 +9,13 @@ public class ReminderRepository : BaseRepository<Reminder>, IReminderRepository
 {
     public ReminderRepository(JoblyDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<Reminder>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
-        => await _dbSet
-            .Where(r => r.UserId == userId && !r.IsDismissed)
-            .OrderBy(r => r.RemindAt)
-            .ToListAsync(cancellationToken);
+    public async Task<IEnumerable<Reminder>> GetByUserIdAsync(
+    Guid userId, CancellationToken cancellationToken = default)
+    => await _dbSet
+        .Include(r => r.Application)
+        .Where(r => r.UserId == userId && !r.IsDismissed)
+        .OrderBy(r => r.RemindAt)
+        .ToListAsync(cancellationToken);
 
     public async Task<IEnumerable<Reminder>> GetPendingRemindersAsync(DateTime upTo, CancellationToken cancellationToken = default)
         => await _dbSet
