@@ -7,6 +7,7 @@ using AspNet.Security.OAuth.GitHub;
 using Serilog;
 using Jobly.Application.Extensions;
 using Jobly.API.Middleware;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,8 @@ builder.Host.UseSerilog((ctx, config) =>
 
 // ── Controllers ──────────────────────────────────────
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApi();
 
 // ── Infrastructure (DB, UoW, Services, Hangfire) ─────
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -84,8 +85,15 @@ var app = builder.Build();
 // ── Middleware pipeline ───────────────────────────────
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "Jobly API";
+        options.WithHttpBearerAuthentication(bearer =>
+        {
+            bearer.Token = "your-super-secret-dev-key-min-32-characters-long";
+        });
+    });
 }
 
 app.UseSerilogRequestLogging();

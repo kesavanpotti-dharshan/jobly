@@ -19,6 +19,8 @@ public class CurrentUserService : ICurrentUserService
         get
         {
             var value = _httpContextAccessor.HttpContext?.User
+                .FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? _httpContextAccessor.HttpContext?.User
                 .FindFirstValue(JwtRegisteredClaimNames.Sub);
             return Guid.TryParse(value, out var id) ? id : Guid.Empty;
         }

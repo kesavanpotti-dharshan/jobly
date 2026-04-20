@@ -57,7 +57,7 @@ public class ExceptionHandlingMiddleware
                 {
                     errors = new Dictionary<string, string[]>
     {
-        { "General", [$"{exception.GetType().Name}: {exception.Message}"] }
+        { "General", [$"{exception.GetType().Name}: {exception.Message} | Inner: {exception.InnerException?.Message} | Inner2: {exception.InnerException?.InnerException?.Message}"] }
     }
                 };
                 break;
