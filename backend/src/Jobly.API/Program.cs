@@ -70,14 +70,35 @@ if (!string.IsNullOrWhiteSpace(builder.Configuration["OAuth:GitHub:ClientId"]))
 builder.Services.AddAuthorization();
 
 // ── CORS ──────────────────────────────────────────────
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("JoblyClient", policy =>
+//         policy.WithOrigins(
+//                 builder.Configuration["App:ClientUrl"]!)
+//             .AllowAnyHeader()
+//             .AllowAnyMethod()
+//             .AllowCredentials());
+// });
+var clientUrl = builder.Configuration["App:ClientUrl"];
+Console.WriteLine($"DEBUG: CORS ClientUrl = '{clientUrl}'");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("JoblyClient", policy =>
-        policy.WithOrigins(
-                builder.Configuration["App:ClientUrl"]!)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials());
+    {
+        if (string.IsNullOrEmpty(clientUrl))
+        {
+            Console.WriteLine("DEBUG: ClientUrl is NULL or EMPTY!");
+            policy.AllowAnyOrigin();
+        }
+        else
+        {
+            policy.WithOrigins(clientUrl)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    });
 });
 
 var app = builder.Build();
