@@ -31,6 +31,6 @@ export interface CreateApplicationRequest {
   priority?: number;
 }
 
-export interface UpdateApplicationRequest extends CreateApplicationRequest {
+export interface UpdateApplicationRequest extends Partial<CreateApplicationRequest> {
   id: string;
 }

@@ -4,7 +4,7 @@ import { ArrowLeft, Plus, Edit2, Trash2, LayoutGrid, List } from 'lucide-react';
 import { useApplications, useCreateApplication, useUpdateApplication, useDeleteApplication } from '@/hooks/useApplications';
 import { Modal } from '@/components/Modal';
 import { ApplicationForm } from '@/components/ApplicationForm';
-import type { Application, ApplicationStatus, CreateApplicationRequest } from '@/types/applications';
+import type { Application, ApplicationStatus, CreateApplicationRequest, UpdateApplicationRequest } from '@/types/applications';
 import type { ApplicationFormValues } from '@/lib/applicationSchemas';
 
 export function ApplicationsPage() {
@@ -23,7 +23,7 @@ export function ApplicationsPage() {
     statusFilter === 'all' ? applications : applications.filter((app) => app.status === statusFilter);
 
   const handleCreate = async (data: ApplicationFormValues) => {
-    const request: CreateApplicationRequest = {
+    const request = {
       companyName: data.companyName,
       roleTitle: data.roleTitle,
       jobUrl: data.jobUrl || '',
@@ -35,7 +35,7 @@ export function ApplicationsPage() {
       salaryMin: data.salaryMin,
       salaryMax: data.salaryMax,
       priority: data.priority,
-    };
+    } as CreateApplicationRequest;
     await createMutation.mutateAsync(request);
     setIsCreateModalOpen(false);
   };
@@ -55,7 +55,7 @@ export function ApplicationsPage() {
       salaryMin: data.salaryMin,
       salaryMax: data.salaryMax,
       priority: data.priority,
-    };
+    } as UpdateApplicationRequest;
     await updateMutation.mutateAsync(request);
     setEditingApp(null);
   };

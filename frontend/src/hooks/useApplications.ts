@@ -41,11 +41,11 @@ async function createApplication(request: CreateApplicationRequest): Promise<App
 async function updateApplication(request: UpdateApplicationRequest): Promise<Application> {
   const { id, ...rest } = request;
   const payload = {
-    companyName: rest.companyName,
-    roleTitle: rest.roleTitle,
+    companyName: rest.companyName || '',
+    roleTitle: rest.roleTitle || '',
     jobUrl: rest.jobUrl || null,
     location: rest.location || null,
-    workMode: mapWorkModeToNumber(rest.workMode),
+    workMode: rest.workMode ? mapWorkModeToNumber(rest.workMode) : 1,
     salaryMin: rest.salaryMin || '',
     salaryMax: rest.salaryMax || '',
     appliedDate: rest.appliedDate || null,

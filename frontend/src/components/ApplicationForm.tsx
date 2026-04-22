@@ -17,24 +17,28 @@ export function ApplicationForm({ onSubmit, isLoading = false, defaultValues }: 
   } = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
     defaultValues: defaultValues
-      ? {
+      ? ({
           companyName: defaultValues.companyName,
           roleTitle: defaultValues.roleTitle,
-          jobUrl: defaultValues.jobUrl,
+          jobUrl: defaultValues.jobUrl || '',
           status: defaultValues.status,
           location: defaultValues.location,
           workMode: defaultValues.workMode,
           appliedDate: defaultValues.appliedDate,
           deadlineDate: defaultValues.deadlineDate,
-          salaryMin: defaultValues.salaryMin,
-          salaryMax: defaultValues.salaryMax,
-          priority: defaultValues.priority,
-        }
+          salaryMin: defaultValues.salaryMin ?? undefined,
+          salaryMax: defaultValues.salaryMax ?? undefined,
+          priority: defaultValues.priority ?? undefined,
+        } as ApplicationFormValues)
       : undefined,
   });
 
+  const handleFormSubmit = (data: ApplicationFormValues) => {
+    onSubmit(data);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <form onSubmit={handleSubmit(handleFormSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* Company Name */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         <label style={{ fontSize: '13px', fontWeight: 500, color: '#cbd5e1' }}>Company Name</label>
