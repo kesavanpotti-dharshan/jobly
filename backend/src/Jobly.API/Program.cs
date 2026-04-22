@@ -83,7 +83,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // ── Middleware pipeline ───────────────────────────────
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.MapOpenApi();
     app.MapScalarApiReference(options =>
