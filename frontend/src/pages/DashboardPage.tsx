@@ -156,13 +156,14 @@ export function DashboardPage() {
           <>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
               {[
-                { label: 'Total applications', value: dashboardData.totalApplications ?? 0, icon: '📋', color: '#93c5fd' },
-                { label: 'Active applications', value: dashboardData.activeApplications ?? 0, icon: '⏳', color: '#d8b4fe' },
-                { label: 'Interviews scheduled', value: dashboardData.interviews ?? 0, icon: '🎤', color: '#fbbf24' },
-                { label: 'Offers received', value: dashboardData.offers ?? 0, icon: '🎉', color: '#86efac' },
+                { label: 'Total applications', value: dashboardData.totalApplications ?? 0, icon: '📋', color: '#93c5fd', onClick: () => navigate('/applications') },
+                { label: 'Active applications', value: dashboardData.activeApplications ?? 0, icon: '⏳', color: '#d8b4fe', onClick: () => navigate('/applications?status=active') },
+                { label: 'Interviews scheduled', value: dashboardData.interviews ?? 0, icon: '🎤', color: '#fbbf24', onClick: () => navigate('/analytics') },
+                { label: 'Offers received', value: dashboardData.offers ?? 0, icon: '🎉', color: '#86efac', onClick: () => navigate('/applications?status=offered') },
               ].map((stat) => (
                 <div
                   key={stat.label}
+                  onClick={stat.onClick}
                   style={{
                     background: 'rgba(255,255,255,0.04)',
                     border: '1px solid rgba(255,255,255,0.08)',
