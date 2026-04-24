@@ -1,13 +1,22 @@
 import { Outlet } from 'react-router-dom';
 import { BriefcaseBusiness } from 'lucide-react';
+import { useThemeStore } from '@/store/themeStore';
 
 export function AuthLayout() {
+  const isDark = useThemeStore((s) => s.isDark);
+
+  const bgColor = isDark ? '#09090f' : '#f8f9fa';
+  const textColor = isDark ? '#f1f5f9' : '#1e293b';
+  const orbColor1 = isDark ? 'rgba(124, 58, 237, 0.5)' : 'rgba(124, 58, 237, 0.2)';
+  const orbColor2 = isDark ? 'rgba(37, 99, 235, 0.5)' : 'rgba(37, 99, 235, 0.15)';
+  const orbColor3 = isDark ? 'rgba(139, 92, 246, 0.5)' : 'rgba(139, 92, 246, 0.15)';
+
   return (
-    <div className="auth-layout">
+    <div className="auth-layout" style={{ background: bgColor, color: textColor }}>
       {/* Ambient background orbs */}
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
+      <div className="orb orb-1" style={{ background: orbColor1 }} />
+      <div className="orb orb-2" style={{ background: orbColor2 }} />
+      <div className="orb orb-3" style={{ background: orbColor3 }} />
 
       <div className="auth-container">
         {/* Logo */}
@@ -29,7 +38,6 @@ export function AuthLayout() {
       <style>{`
         .auth-layout {
           min-height: 100dvh;
-          background: #09090f;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -37,6 +45,7 @@ export function AuthLayout() {
           position: relative;
           overflow: hidden;
           font-family: 'DM Sans', 'Geist', system-ui, sans-serif;
+          transition: all 0.3s ease;
         }
 
         .orb {
